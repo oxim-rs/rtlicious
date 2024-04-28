@@ -1,0 +1,23 @@
+workspace = { members = ["src/rtlilicious-cli"] }
+[package]
+name = "rtlilicious"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+getset = "0.1.2"
+log = "0.4.21"
+nom = "7.1.3"
+nom-tracable = "0.9.1"
+nom_locate = "4.2.0"
+serde = { version = "1.0.199", features = ["derive"] }
+
+[dev-dependencies]
+indoc = "2.0.5"
+pretty_assertions = "1.4.0"
+
+[features]
+default = []
+trace   = ["nom-tracable/trace"]
