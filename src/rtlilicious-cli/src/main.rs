@@ -1,6 +1,5 @@
 use clap::{Parser, Subcommand};
-use nom_locate::LocatedSpan;
-use nom_tracable::{histogram, TracableInfo};
+use nom_tracable::histogram;
 use std::path::PathBuf;
 
 #[derive(Parser)]
