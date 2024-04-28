@@ -1,6 +1,6 @@
 # Github action testing for the rust library with coverage info
 # on Merge request and push to master branch
-name: test + cov
+name: test + coverage
 
 on:
   push:
