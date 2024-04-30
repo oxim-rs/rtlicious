@@ -203,19 +203,38 @@ pub enum SignalSync {
 
 /// Represents a sync
 #[derive(Debug, Clone, PartialEq, Getters, Serialize)]
+#[getset(get = "pub")]
 pub struct Sync {
     /// The sync event
     sync_event: SyncOn,
     /// The updates to apply on the sync event
     updates: Vec<(SigSpec, SigSpec)>,
+    /// memwr statements
+    memwrs: HashMap<String, Memwr>,
+}
+
+/// Represents a memwr statement
+#[derive(Debug, Clone, PartialEq, Getters, Serialize)]
+#[getset(get = "pub")]
+pub struct Memwr {
+    /// The attributes of the memwr
+    attributes: HashMap<String, Constant>,
+    /// The address of the memwr
+    address: SigSpec,
+    /// The data of the memwr
+    data: SigSpec,
+    /// The enable of the memwr
+    enable: SigSpec,
+    /// The priority mask of the memwr
+    priority_mask: SigSpec,
 }
 
 /// Input type must implement trait Tracable
 /// nom_locate::LocatedSpan<T, TracableInfo> implements it.
 type Span<'a> = LocatedSpan<&'a str, TracableInfo>;
 
-/// Parse a RTLIL design from a type that implements AsRef<str>.
-pub fn parse(input: &str) -> Result<Design, &str> {
+/// Parse a RTLIL design from a type that implements `AsRef<str>`.
+pub fn parse(input: &str) -> Result<Design, Span> {
     Design::new_from_str(input)
 }
 

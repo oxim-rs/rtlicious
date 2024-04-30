@@ -1,5 +1,6 @@
 //! Declares a module, with zero or more attributes, consisting of zero or more wires, memories, cells, processes, and connections.
 //!
+//! ```text
 //! <module>            ::= <attr-stmt>* <module-stmt> <module-body> <module-end-stmt>
 //! <module-stmt>       ::= module <id> <eol>
 //! <module-body>       ::= (<param-stmt>
@@ -10,6 +11,7 @@
 //! <param-stmt>        ::= parameter <id> <constant>? <eol>
 //! <constant>          ::= <value> | <integer> | <string>
 //! <module-end-stmt>   ::= end <eol>
+//! ```
 
 use crate::*;
 use nom::{
@@ -60,7 +62,6 @@ pub(crate) fn module(input: Span) -> IResult<Span, (String, Module)> {
         ))(input)
     })(input)?;
 
-    // end stmt
     let (input, _) = module_end_stmt(input)?;
 
     Ok((
@@ -80,7 +81,7 @@ pub(crate) fn module(input: Span) -> IResult<Span, (String, Module)> {
     ))
 }
 
-/// <module-stmt>       ::= module <id> <eol>
+/// `<module-stmt>       ::= module <id> <eol>`
 pub(crate) fn module_stmt(input: Span) -> IResult<Span, &str> {
     let (input, _) = tag("module")(input)?;
     let (input, _) = characters::sep(input)?;
@@ -89,7 +90,7 @@ pub(crate) fn module_stmt(input: Span) -> IResult<Span, &str> {
     Ok((input, id))
 }
 
-/// <module-end-stmt>   ::= end <eol>
+/// `<module-end-stmt>   ::= end <eol>`
 pub(crate) fn module_end_stmt(input: Span) -> IResult<Span, &str> {
     // eat whitespace if any
     let (input, _) = tag("end")(input)?;
@@ -97,7 +98,7 @@ pub(crate) fn module_end_stmt(input: Span) -> IResult<Span, &str> {
     Ok((input, ""))
 }
 
-/// <param-stmt>        ::= parameter <id> <constant>? <eol>
+/// `<param-stmt>        ::= parameter <id> <constant>? <eol>`
 pub(crate) fn param_stmt(input: Span) -> IResult<Span, (String, Option<Constant>)> {
     let (input, _) = tag("parameter")(input)?;
     let (input, id) = preceded(characters::sep, identifier::id)(input)?;

@@ -29,6 +29,12 @@ jobs:
       - name: Build
         run: cargo build --verbose
 
+      - name: Fmt
+        run: cargo fmt -- --check
+      
+      - name: Clippy
+        run: cargo clippy -- -D warnings
+
       - name: Test
         run: cargo test --verbose
 
@@ -36,7 +42,7 @@ jobs:
         run: cargo tarpaulin --out Xml
 
       - name: Upload coverage
-        uses: codecov/codecov-action@v1
+        uses: codecov/codecov-action@v4
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cobertura.xml

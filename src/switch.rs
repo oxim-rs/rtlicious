@@ -3,7 +3,7 @@
 //! are no signals in the list, then the case is the default case. The body of
 //! a case consists of zero or more switches and assignments. Both switches
 //! and cases may have zero or more attributes.
-//!
+//! ```text
 //! <switch>            ::= <switch-stmt> <case>* <switch-end-stmt>
 //! <switch-stmt>        := <attr-stmt>* switch <sigspec> <eol>
 //! <case>              ::= <attr-stmt>* <case-stmt> <case-body>
@@ -11,6 +11,7 @@
 //! <compare>           ::= <sigspec> (, <sigspec>)*
 //! <case-body>         ::= (<switch> | <assign-stmt>)*
 //! <switch-end-stmt>   ::= end <eol>
+//! ```
 
 use crate::*;
 use nom::{
@@ -40,7 +41,7 @@ pub(crate) fn switch(input: Span) -> IResult<Span, Switch> {
     ))
 }
 
-/// <case>              ::= <attr-stmt>* <case-stmt> <case-body>
+/// `<case>              ::= <attr-stmt>* <case-stmt> <case-body>`
 /// returns (attributes, compare against:, case_body)
 #[tracable_parser]
 pub(crate) fn case(input: Span) -> IResult<Span, Case> {
@@ -57,7 +58,7 @@ pub(crate) fn case(input: Span) -> IResult<Span, Case> {
     ))
 }
 
-/// <switch-stmt>        := <attr-stmt>* switch <sigspec> <eol>
+/// `<switch-stmt> := <attr-stmt>* switch <sigspec> <eol>`
 pub(crate) fn switch_stmt(input: Span) -> IResult<Span, (HashMap<String, Constant>, SigSpec)> {
     let (input, attributes) = many0(attribute::attr_stmt)(input)?;
     let (input, _) = tag("switch")(input)?;
@@ -67,7 +68,8 @@ pub(crate) fn switch_stmt(input: Span) -> IResult<Span, (HashMap<String, Constan
     Ok((input, (attributes.into_iter().collect(), on_sigspec)))
 }
 
-/// <case-stmt>         ::= case <compare>? <eol>
+/// `<case-stmt> ::= case <compare>? <eol>`
+#[tracable_parser]
 pub(crate) fn case_stmt(input: Span) -> IResult<Span, Option<Vec<SigSpec>>> {
     let (input, _) = tag("case")(input)?;
     let (input, _) = characters::sep(input)?;
@@ -76,7 +78,7 @@ pub(crate) fn case_stmt(input: Span) -> IResult<Span, Option<Vec<SigSpec>>> {
     Ok((input, opt_compare))
 }
 
-/// <compare>           ::= <sigspec> (, <sigspec>)*
+/// `<compare> ::= <sigspec> (, <sigspec>)*`
 pub(crate) fn compare(input: Span) -> IResult<Span, Vec<SigSpec>> {
     // take one sigspec, then
     // many0, sigpspec, preceded by a comma
@@ -90,14 +92,14 @@ pub(crate) fn compare(input: Span) -> IResult<Span, Vec<SigSpec>> {
     Ok((input, sigspecs))
 }
 
-/// <switch-end-stmt>   ::= end <eol>
+/// `<switch-end-stmt>   ::= end <eol>`
 pub(crate) fn switch_end_stmt(input: Span) -> IResult<Span, &str> {
     let (input, _) = tag("end")(input)?;
     let (input, _) = characters::eol(input)?;
     Ok((input, ""))
 }
 
-/// <case-body>         ::= (<switch> | <assign-stmt>)*
+/// `<case-body>         ::= (<switch> | <assign-stmt>)*`
 pub(crate) fn case_body(input: Span) -> IResult<Span, Vec<crate::switch::CaseBody>> {
     //alt((crate::switch::switch, syntax::process::assign_stmt))(input)
     many0(alt((

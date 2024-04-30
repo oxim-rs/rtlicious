@@ -38,13 +38,13 @@ pub fn nonws(input: Span) -> IResult<Span, char> {
 
 /// consume eol
 /// An eol is one or more consecutive ASCII newlines (10) and carriage returns (13).
-pub fn eol(input: Span) -> IResult<Span, &str> {
+pub fn eol(input: Span) -> IResult<Span, ()> {
     let (input, _) = many1(alt((tag("\n"), tag("\r"))))(input)?;
     // eat comments if any
-    let (input, _) = many0(string::comment)(input)?; // eat comments if any
-                                                     // eat whitespace if any
+    let (input, _) = many0(string::comment)(input)?;
+    // eat whitespace if any
     let (input, _) = take_while(is_sep)(input)?;
-    Ok((input, ""))
+    Ok((input, ()))
 }
 
 #[cfg(test)]
@@ -69,8 +69,9 @@ mod tests {
         let info = TracableInfo::new().parser_width(64).fold("term");
         for (i, (input, expected)) in vectors.iter().enumerate() {
             let span = LocatedSpan::new_extra(*input, info);
-            let ret = sep(span).unwrap();
-            assert_eq!(ret.0.fragment(), expected, "Test case {}", i);
+            let ret = sep(span);
+            assert!(ret.is_ok(), "Test case {}", i);
+            assert_eq!(ret.unwrap().0.fragment(), expected, "Test case {}", i);
         }
     }
 
@@ -89,8 +90,9 @@ mod tests {
         let info = TracableInfo::new().parser_width(64).fold("term");
         for (i, (input, expected)) in vectors.iter().enumerate() {
             let span = LocatedSpan::new_extra(*input, info);
-            let ret = eol(span).unwrap();
-            assert_eq!(ret.1, *expected, "Test case {}", i);
+            let ret = eol(span);
+            assert!(ret.is_ok(), "Test case {}", i);
+            assert_eq!(ret.unwrap().0.fragment(), expected, "Test case {}", i);
         }
     }
 }

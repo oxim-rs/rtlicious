@@ -1,7 +1,7 @@
 //! Declares a wire, with zero or more attributes, with the given identifier and options in the enclosing module.
 //!
 //! See RTLIL::Cell and RTLIL::Wire for an overview of wires.
-//!
+//! ```text
 //! <wire>          ::= <attr-stmt>* <wire-stmt>
 //! <wire-stmt>     ::= wire <wire-option>* <wire-id> <eol>
 //! <wire-id>       ::= <id>
@@ -12,6 +12,7 @@
 //!                  |  inout <integer>
 //!                  |  upto
 //!                  |  signed
+//! ```
 
 use std::collections::HashMap;
 
@@ -34,7 +35,7 @@ impl Default for Wire {
     }
 }
 
-/// <wire>          ::= <attr-stmt>* <wire-stmt>
+/// `<wire> ::= <attr-stmt>* <wire-stmt>`
 #[tracable_parser]
 pub fn wire(input: Span) -> IResult<Span, (String, Wire)> {
     let (input, attrs) = many0(attribute::attr_stmt)(input)?;
@@ -43,7 +44,7 @@ pub fn wire(input: Span) -> IResult<Span, (String, Wire)> {
     Ok((input, wire))
 }
 
-/// <wire-stmt>     ::= wire <wire-option>* <wire-id> <eol>
+/// `<wire-stmt> ::= wire <wire-option>* <wire-id> <eol>`
 pub fn wire_stmt(input: Span) -> IResult<Span, (String, Wire)> {
     let (input, _) = tag("wire")(input)?;
     let (input, _) = characters::sep(input)?;
@@ -77,6 +78,15 @@ enum WireOption {
     Signed,
 }
 
+/// ```text
+/// <wire-option>   ::= width <integer>
+///                  |  offset <integer>
+///                  |  input <integer>
+///                  |  output <integer>
+///                  |  inout <integer>
+///                  |  upto
+///                  |  signed
+/// ```
 fn wire_option(input: Span) -> IResult<Span, WireOption> {
     let (input, option) = nom::branch::alt((
         tag("width"),

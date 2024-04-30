@@ -1,6 +1,7 @@
 //! Declares a process, with zero or more attributes, with the given identifier
 //! in the enclosing module. The body of a process consists of zero or more
 //! assignments, exactly one switch, and zero or more syncs.
+//! ```text
 //! <process>       ::= <attr-stmt>* <proc-stmt> <process-body> <proc-end-stmt>
 //! <proc-stmt>     ::= process <id> <eol>
 //! <process-body>  ::= <assign-stmt>* <switch>? <assign-stmt>* <sync>*
@@ -8,6 +9,7 @@
 //! <dest-sigspec>  ::= <sigspec>
 //! <src-sigspec>   ::= <sigspec>
 //! <proc-end-stmt> ::= end <eol>
+//! ```
 
 use crate::*;
 use nom::{bytes::complete::tag, multi::many0, IResult};
@@ -36,7 +38,7 @@ pub(crate) fn process(input: Span) -> IResult<Span, (String, Process)> {
     ))
 }
 
-/// <proc-stmt>     ::= process <id> <eol>
+/// `<proc-stmt>     ::= process <id> <eol>`
 pub(crate) fn process_stmt(input: Span) -> IResult<Span, String> {
     let (input, _) = tag("process")(input)?;
     let (input, _) = characters::sep(input)?;
@@ -44,14 +46,14 @@ pub(crate) fn process_stmt(input: Span) -> IResult<Span, String> {
     let (input, _) = characters::eol(input)?;
     Ok((input, id.to_string()))
 }
-/// <proc-end-stmt> ::= end <eol>
+/// `<proc-end-stmt> ::= end <eol>`
 pub(crate) fn process_end_stmt(input: Span) -> IResult<Span, &str> {
     let (input, _) = tag("end")(input)?;
     let (input, _) = characters::eol(input)?;
     Ok((input, ""))
 }
 
-/// <assign-stmt>   ::= assign <dest-sigspec> <src-sigspec> <eol>
+/// `<assign-stmt>   ::= assign <dest-sigspec> <src-sigspec> <eol>`
 pub(crate) fn assign_stmt(input: Span) -> IResult<Span, (SigSpec, SigSpec)> {
     let (input, _) = tag("assign")(input)?;
     let (input, _) = characters::sep(input)?;

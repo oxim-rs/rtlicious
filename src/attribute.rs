@@ -1,6 +1,6 @@
 //! Attribute statements
 //! Declares an attribute with the given identifier and value.
-//! <attr-stmt> ::= attribute <id> <constant> <eol>
+//! `<attr-stmt> ::= attribute <id> <constant> <eol>`
 
 use nom::{bytes::complete::tag, IResult};
 use nom_tracable::tracable_parser;

@@ -20,6 +20,7 @@ use nom::{
     sequence::{delimited, preceded},
     AsChar, IResult, Parser,
 };
+use nom_tracable::tracable_parser;
 
 // parser combinators are constructed from the bottom up:
 // first we write parsers for the smallest elements (escaped characters),
@@ -154,16 +155,19 @@ where
 /// * \n: A newline
 /// * \t: A tab
 /// * \ooo: A character specified as a one, two, or three digit octal value
+#[tracable_parser]
 pub fn string(s: Span) -> IResult<Span, String> {
-    let (input, string) = parse_string(s)?;
-    Ok((input, string))
+    let (input, this_string) = parse_string(s)?;
+    Ok((input, this_string))
 }
 
-pub fn comment(input: Span) -> IResult<Span, &str> {
+#[tracable_parser]
+#[inline]
+pub fn comment(input: Span) -> IResult<Span, String> {
     let (input, _) = tag("#")(input)?;
-    let (input, _comment) = take_while(|c| c != '\n' && c != '\r')(input)?;
+    let (input, this_comment) = take_while(|c| c != '\n' && c != '\r')(input)?;
     let (input, _) = alt((tag("\n"), tag("\r\n"), tag("\r")))(input)?;
-    Ok((input, &_comment))
+    Ok((input, this_comment.fragment().to_string()))
 }
 
 #[cfg(test)]

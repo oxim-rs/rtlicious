@@ -2,7 +2,7 @@
 //!
 //! See RTLIL::Memory for an overview of memory cells, and Memories for details about memory cell types.
 //!
-//! <memory>        ::= <attr-stmt>* <memory-stmt>
+//! `<memory>        ::= <attr-stmt>* <memory-stmt>`
 
 use crate::*;
 use nom::{
@@ -51,9 +51,11 @@ pub(crate) enum MemoryOption {
     Offset(usize),
 }
 
+/// ```text
 /// <memory-option> ::= width <integer>
 ///                  |  size <integer>
-//Z                  |  offset <integer>
+///                  |  offset <integer>
+/// ```
 pub(crate) fn memory_option(input: Span) -> IResult<Span, MemoryOption> {
     let (input, option) = alt((tag("width"), tag("size"), tag("offset")))(input)?;
     let (input, val) = preceded(characters::sep, value::integer)(input)?;

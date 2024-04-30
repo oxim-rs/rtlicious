@@ -6,18 +6,24 @@
 //! * m: A marked bit (internal use only)
 //! * -: A don’t care value
 
-use nom::{bytes::complete::tag, combinator::opt, multi::many1, IResult};
+use nom::{
+    bytes::complete::tag,
+    character::complete::one_of,
+    combinator::opt,
+    multi::{many0, many1},
+    IResult,
+};
 
 use crate::Span;
 
-/// <decimal-digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
+/// `<decimal-digit> ::= 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9`
 fn decimal_digit(input: Span) -> IResult<Span, char> {
-    nom::character::complete::one_of("0123456789")(input)
+    one_of("0123456789")(input)
 }
 
-/// <binary-digit>  ::= 0 | 1 | x | z | m | -
+/// `<binary-digit>  ::= 0 | 1 | x | z | m | -`
 fn binary_digit(input: Span) -> IResult<Span, char> {
-    nom::character::complete::one_of("01xzXZmM-")(input)
+    one_of("01xzXZmM-")(input)
 }
 
 /// <integer>       ::= -? <decimal-digit>+
@@ -37,7 +43,7 @@ pub(crate) fn integer(input: Span) -> IResult<Span, i32> {
 pub(crate) fn value(input: Span) -> IResult<Span, Vec<char>> {
     let (input, digits) = many1(decimal_digit)(input)?;
     let (input, _) = tag("'")(input)?;
-    let (input, binary_digits) = many1(binary_digit)(input)?;
+    let (input, binary_digits) = many0(binary_digit)(input)?;
     let parsed_size = digits.iter().collect::<String>().parse::<i64>().unwrap();
     if parsed_size != binary_digits.len() as i64 {
         // TODO: will assume that when there only 1 digi, extend. Otherwise, panic
@@ -80,6 +86,10 @@ mod tests {
             let ret = decimal_digit(span).unwrap();
             assert_eq!(ret.1, *expected, "Test case {}", i);
         }
+        // test not:
+        let span = LocatedSpan::new_extra("a9", info);
+        let ret = decimal_digit(span);
+        assert!(ret.is_err());
     }
 
     #[test]
@@ -164,6 +174,7 @@ mod tests {
             ("2'01", vec!['1', '0']),
             ("3'101", vec!['1', '0', '1']),
             ("4'010x", vec!['x', '0', '1', '0']),
+            ("0'x", vec![]), // no vec since constant is 0-wide
         ];
         let info: TracableInfo = TracableInfo::new().parser_width(64).fold("term");
         for (i, (input, expected)) in vectors.iter().enumerate() {
