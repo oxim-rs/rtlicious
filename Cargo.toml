@@ -1,6 +1,11 @@
 workspace = { members = ["src/rtlilicious-cli"] }
 [package]
 name = "rtlilicious"
+authors = ["Alexis Marquet <alexis at alexismarquet dot com>"]
+description = "A nom-based parser for Yosys RTLIL files"
+readme = "README.md"
+repository = "https://github.com/oxim-rs/rtlilicious"
+license = "MIT"
 version = "0.1.0"
 edition = "2021"
 

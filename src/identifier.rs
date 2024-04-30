@@ -26,6 +26,7 @@ fn autogen_id(input: Span) -> IResult<Span, &str> {
 
 /// <id>            ::= <public-id> | <autogen-id>
 #[tracable_parser]
+#[inline]
 pub(crate) fn id(input: Span) -> IResult<Span, &str> {
     alt((public_id, autogen_id))(input)
 }

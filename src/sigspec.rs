@@ -4,10 +4,12 @@
 //! wide, 2’s complement. For example, a constant of is the same as
 //! 32'11111111111111111111111111111111, while a constant of is the same as
 //! 32'1. See RTLIL::SigSpec for an overview of signal specifications.
+//! ```text
 //! <sigspec> ::= <constant>
 //!            |  <wire-id>
 //!            |  <sigspec> [ <integer> (:<integer>)? ]
 //!            |  { <sigspec>* }
+//! ```
 
 use crate::{characters, constant, identifier, value, SigSpec, Span};
 use nom::{
@@ -20,10 +22,12 @@ use nom::{
 };
 use nom_tracable::tracable_parser;
 
+/// ```text
 /// <sigspec> ::= <constant>
 ///            |  <wire-id>
 ///            |  <sigspec> [ <integer> (:<integer>)? ]
 ///            |  { <sigspec>* }
+/// ```
 #[tracable_parser]
 pub(crate) fn sigspec(input: Span) -> IResult<Span, SigSpec> {
     let (input, sigspec) = alt((
@@ -37,7 +41,7 @@ pub(crate) fn sigspec(input: Span) -> IResult<Span, SigSpec> {
     Ok((input, sigspec))
 }
 
-/// <wire_id> [ <integer> (:<integer>)? ]
+/// `<wire_id> [ <integer> (:<integer>)? ]`
 pub(crate) fn sigspec_range(input: Span) -> IResult<Span, (SigSpec, usize, Option<usize>)> {
     // get the wire_id
     let (input, wire_id) = identifier::id(input)?;
@@ -66,7 +70,7 @@ pub(crate) fn sigspec_range(input: Span) -> IResult<Span, (SigSpec, usize, Optio
     ))
 }
 
-///            |  { <sigspec>* }
+/// `|  { <sigspec>* }`
 pub(crate) fn sigspec_concat(input: Span) -> IResult<Span, Vec<SigSpec>> {
     let (input, _) = tag("{")(input)?;
     // any whitespace

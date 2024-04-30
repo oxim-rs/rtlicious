@@ -1,7 +1,6 @@
 //! A file consists of an optional autoindex statement followed by zero or more modules.
 //!
-//! <file> ::= <autoidx-stmt>? <module>*
-//!
+//! `<file> ::= <autoidx-stmt>? <module>*`
 //!
 
 use crate::{characters, string, value, Design, Span};
@@ -15,13 +14,22 @@ use nom_tracable::tracable_parser;
 
 impl Design {
     /// Parse a string into a `Design` struct
-    pub fn new_from_str(input: &str) -> Result<Design, &str> {
+    pub fn new_from_str(input: &str) -> Result<Design, Span> {
         let input = Span::new_extra(input, Default::default());
-        let (input, file) = file(input).unwrap();
-        if input.fragment().is_empty() {
-            Ok(file)
-        } else {
-            Err(input.fragment())
+        let res = design(input);
+        match res {
+            Ok((rem, design)) => {
+                if rem.fragment().is_empty() {
+                    //dbg!(rem.extra);
+                    Ok(design)
+                } else {
+                    Err(rem)
+                }
+            }
+            Err(e) => {
+                dbg!(&e);
+                Err(input)
+            }
         }
     }
 }
@@ -29,7 +37,7 @@ impl Design {
 #[tracable_parser]
 /// Parse a Span into a `Design` struct.
 /// needed if you want to trace the parsing
-pub fn file(input: Span) -> IResult<Span, Design> {
+pub fn design(input: Span) -> IResult<Span, Design> {
     // potential comment
     let (input, _) = many0(string::comment)(input)?;
     let (input, autoidx) = opt(autoidx_stmt)(input)?;
@@ -47,7 +55,7 @@ pub fn file(input: Span) -> IResult<Span, Design> {
 ///
 /// The autoindex statement sets the global autoindex value used by Yosys when it needs to generate a unique name, e.g. flattenN. The N part is filled with the value of the global autoindex value, which is subsequently incremented. This global has to be dumped into RTLIL, otherwise e.g. dumping and running a pass would have different properties than just running a pass on a warm design.
 ///
-/// <autoidx-stmt> ::= autoidx <integer> <eol>
+/// `<autoidx-stmt> ::= autoidx <integer> <eol>`
 #[tracable_parser]
 pub fn autoidx_stmt(input: Span) -> IResult<Span, i32> {
     let (input, _) = tag("autoidx ")(input)?;
@@ -8314,7 +8322,7 @@ module \serv_top
 end
 "#};
         let span = Span::new_extra(input, Default::default());
-        let res = file(span).unwrap();
+        let res = design(span).unwrap();
         assert!(!res.1.modules.is_empty());
     }
     #[test]
