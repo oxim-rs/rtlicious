@@ -1,5 +1,5 @@
 [package]
-name = "rtlilicious-cli"
+name = "rtlicious-cli"
 version = "0.1.0"
 edition = "2021"
 
@@ -7,13 +7,11 @@ edition = "2021"
 
 [dependencies]
 clap = { version = "4.5.4", features = ["derive"] }
-rtlilicious = {path = "../../"}
-nom-tracable = "0.9.1"
-nom_locate = "4.2.0"
+rtlicious = {path = "../../"}
 simple_logger = "4.3.3"
 log = "0.4.21"
 
 
 [features]
 default = []
-trace   = ["nom-tracable/trace", "rtlilicious/trace"]
+trace   = ["rtlicious/trace"]

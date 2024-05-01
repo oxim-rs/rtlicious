@@ -6,10 +6,6 @@ use std::{path::PathBuf, process};
 #[derive(Parser)]
 #[command(version, about, long_about = None)]
 struct Cli {
-    /// Sets a custom config file
-    #[arg(short, long, value_name = "FILE")]
-    config: Option<PathBuf>,
-
     #[command(subcommand)]
     command: Commands,
 }
@@ -20,12 +16,13 @@ enum Commands {
     Parse(ParseOpts),
 }
 
+/// parse a file, returns error if it fails
 #[derive(Parser)]
 struct ParseOpts {
     /// The input file to parse
     #[arg(short, long)]
     input: PathBuf,
-    // option to print
+    /// optionally print the parsed design to stdout
     #[arg(short, long)]
     print: bool,
 }
@@ -37,7 +34,7 @@ fn main() {
     match args.command {
         Commands::Parse(opts) => {
             let file = std::fs::read_to_string(opts.input.clone()).unwrap();
-            let ret = rtlilicious::parse(&file);
+            let ret = rtlicious::parse(&file);
             if let Err(e) = ret {
                 //let safe_rem: Vec<String> = e.lines().take(5).map(|l| l.to_string()).collect();
                 //log::error!("Failed to parse RTLIL file, the element we were unable to parse starts like this: \n {}", safe_rem.join("\n"));

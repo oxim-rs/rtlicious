@@ -1,13 +1,13 @@
 #![deny(missing_docs)]
 //! Yosys RTLIL text representation parsing library.
 //! ```
-//! use rtlilicious;
+//! use rtlicious;
 //! let src =
 //! r#"module \test
 //! wire $a;
 //! end
 //! "#;
-//! let design = rtlilicious::parse(src).unwrap();
+//! let design = rtlicious::parse(src).unwrap();
 //! assert_eq!(design.modules().len(), 1);
 //! ```
 mod attribute;

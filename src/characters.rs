@@ -49,10 +49,10 @@ pub fn eol(input: Span) -> IResult<Span, ()> {
 
 #[cfg(test)]
 mod tests {
+    use super::*;
     use nom_locate::LocatedSpan;
     use nom_tracable::TracableInfo;
-
-    use super::*;
+    use pretty_assertions::assert_eq;
 
     #[test]
     fn test_sep() {
@@ -72,6 +72,32 @@ mod tests {
             let ret = sep(span);
             assert!(ret.is_ok(), "Test case {}", i);
             assert_eq!(ret.unwrap().0.fragment(), expected, "Test case {}", i);
+        }
+    }
+
+    #[test]
+    fn test_nonws() {
+        let vectors = [
+            ("a", 'a'),
+            ("A", 'A'),
+            ("1", '1'),
+            ("_", '_'),
+            ("$", '$'),
+            ("\\", '\\'),
+        ];
+        let info = TracableInfo::new().parser_width(64).fold("term");
+        for (i, (input, expected)) in vectors.iter().enumerate() {
+            let span = LocatedSpan::new_extra(*input, info);
+            let ret = nonws(span);
+            let ret =
+                ret.unwrap_or_else(|_| panic!("Test case {}: failed with input {:?}", i, input));
+            assert!(
+                ret.0.fragment().is_empty(),
+                "Test case {}: failed with input {:?}",
+                i,
+                input
+            );
+            assert_eq!(ret.1, *expected, "Test case {}", i);
         }
     }
 

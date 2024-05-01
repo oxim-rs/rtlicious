@@ -1,13 +1,14 @@
-workspace = { members = ["src/rtlilicious-cli"] }
 [package]
-name = "rtlilicious"
+name = "rtlicious"
 authors = ["Alexis Marquet <alexis at alexismarquet dot com>"]
 description = "A nom-based parser for Yosys RTLIL files"
 readme = "README.md"
-repository = "https://github.com/oxim-rs/rtlilicious"
+repository = "https://github.com/oxim-rs/rtlicious"
 license = "MIT"
 version = "0.1.0"
 edition = "2021"
+
+[lib]
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 

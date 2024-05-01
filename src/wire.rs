@@ -173,7 +173,7 @@ mod tests {
                 ),
             ),
             (
-                "wire offset 1 $a\n",
+                "wire offset 1 signed $a\n",
                 (
                     "a".to_string(),
                     Wire {
@@ -183,7 +183,7 @@ mod tests {
                         output: false,
                         inout: false,
                         upto: false,
-                        signed: false,
+                        signed: true,
                         attributes: HashMap::new(),
                     },
                 ),

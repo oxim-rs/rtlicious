@@ -144,12 +144,22 @@ mod tests {
     }
     #[test]
     fn test_cell_body_stmt() {
+        let vectors = [
+            (
+                "parameter \\WIDTH 6\n",
+                ("WIDTH".to_string(), Constant::Integer(6)),
+            ),
+            (
+                "parameter signed \\SOME_SIGNED 0\n",
+                ("SOME_SIGNED".to_string(), Constant::Integer(0)),
+            ),
+        ];
         let info: TracableInfo = TracableInfo::new().parser_width(64).fold("term");
-        let span = Span::new_extra("parameter \\WIDTH 6\n", info);
-        assert_eq!(
-            cell_body_stmt_param(span).unwrap().1,
-            ("WIDTH".to_string(), Constant::Integer(6))
-        );
+        for (i, (input, expected)) in vectors.iter().enumerate() {
+            let span = Span::new_extra(*input, info);
+            let ret = cell_body_stmt_param(span).unwrap();
+            assert_eq!(ret.1, *expected, "Test case {}", i);
+        }
     }
 
     #[test]
