@@ -36,7 +36,7 @@ jobs:
           file: ./cobertura.xml
           fail_ci_if_error: true
 
-  fmt+clippy:
+  fmt_and_clippy:
     runs-on: ubuntu-latest
 
     steps:
