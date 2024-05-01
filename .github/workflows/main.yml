@@ -11,7 +11,7 @@ on:
       - main
 
 jobs:
-  build:
+  coverage:
     runs-on: ubuntu-latest
 
     steps:
@@ -26,18 +26,6 @@ jobs:
       - name: Install cargo-tarpaulin
         run: cargo install cargo-tarpaulin
 
-      - name: Build
-        run: cargo build --verbose
-
-      - name: Fmt
-        run: cargo fmt -- --check
-      
-      - name: Clippy
-        run: cargo clippy -- -D warnings
-
-      - name: Test
-        run: cargo test --verbose
-
       - name: Coverage
         run: cargo tarpaulin --out Xml
 
@@ -46,8 +34,40 @@ jobs:
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./cobertura.xml
-          flags: unittests
-          name: codecov-umbrella
           fail_ci_if_error: true
+
+  fmt_and_clippy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+   
+      - name: Fmt
+        run: cargo fmt -- --check
+      
+      - name: Clippy
+        run: cargo clippy -- -D warnings
+
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          override: true
+
+      - name: Test
+        run: cargo test --verbose
+
 
 
