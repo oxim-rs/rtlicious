@@ -14,11 +14,3 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 - pub getters on Wire, Memory, Process, Case and Switch
-
-### Other
-- Update release-plz.yml
-- fix codecov config
-
- - Initial release
-
-### Added
