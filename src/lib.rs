@@ -79,21 +79,29 @@ pub struct Cell {
 
 /// Represents a wire
 #[derive(Debug, Clone, PartialEq, Getters, Serialize)]
+#[getset(get = "pub")]
 pub struct Wire {
     /// defaults to 1
     width: usize,
     /// defaults to 0
     offset: usize,
+    /// if the wire is an input to the module
     input: bool,
+    /// if the wire is an output to the module
     output: bool,
+    /// if the wire is tristate?
     inout: bool,
+    /// TODO: what is this?
     upto: bool,
+    /// if the wire is signed? TODO: what is this?
     signed: bool,
+    /// attributes of the wire
     attributes: HashMap<String, Constant>,
 }
 
 /// Represents a memory cell
 #[derive(Debug, Clone, PartialEq, Getters, Serialize)]
+#[getset(get = "pub")]
 pub struct Memory {
     /// The width of the memory cell
     width: usize,
@@ -107,6 +115,7 @@ pub struct Memory {
 
 /// Represents a process
 #[derive(Debug, Clone, PartialEq, Getters, Serialize)]
+#[getset(get = "pub")]
 pub struct Process {
     /// The attributes of the process
     attributes: HashMap<String, Constant>,
@@ -153,6 +162,7 @@ pub enum CaseBody {
 
 /// Represents a case
 #[derive(Debug, Clone, PartialEq, Getters, Serialize)]
+#[getset(get = "pub")]
 pub struct Case {
     /// The attributes of the case
     pub(crate) attributes: HashMap<String, Constant>,
@@ -164,12 +174,13 @@ pub struct Case {
 
 /// Represents a switch
 #[derive(Debug, Clone, PartialEq, Getters, Serialize)]
+#[getset(get = "pub")]
 pub struct Switch {
     /// The attributes of the switch
     pub(crate) attributes: HashMap<String, Constant>,
     /// The signal to switch on, ie. compare against
     pub(crate) switch_on_sigspec: SigSpec,
-    // run CaseBody if true
+    /// run CaseBody if true
     pub(crate) cases: Vec<Case>,
 }
 
