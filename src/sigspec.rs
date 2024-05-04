@@ -35,7 +35,7 @@ pub(crate) fn sigspec(input: Span) -> IResult<Span, SigSpec> {
         map(sigspec_range, |range| {
             SigSpec::Range(Box::new(range.0), range.1, range.2)
         }),
-        map(identifier::id, |id| SigSpec::WireId(id.to_string())),
+        map(identifier::id, |id| SigSpec::WireId(id.erease())),
         map(sigspec_concat, SigSpec::Concat),
     ))(input)?;
     Ok((input, sigspec))
@@ -62,11 +62,7 @@ pub(crate) fn sigspec_range(input: Span) -> IResult<Span, (SigSpec, usize, Optio
     let (input, _) = tag("]")(input)?;
     Ok((
         input,
-        (
-            SigSpec::WireId(wire_id.to_string()),
-            start as usize,
-            opt_end,
-        ),
+        (SigSpec::WireId(wire_id.erease()), start as usize, opt_end),
     ))
 }
 

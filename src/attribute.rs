@@ -15,7 +15,7 @@ pub(crate) fn attr_stmt(input: Span) -> IResult<Span, (String, Constant)> {
     let (input, _) = characters::sep(input)?;
     let (input, constant) = constant::constant(input)?;
     let (input, _) = characters::eol(input)?;
-    Ok((input, (id.to_string(), constant)))
+    Ok((input, (id.erease(), constant)))
 }
 
 #[cfg(test)]

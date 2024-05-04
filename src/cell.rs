@@ -72,13 +72,13 @@ pub(crate) fn cell_stmt(input: Span) -> IResult<Span, (String, String)> {
 /// <cell-id>           ::= <id>
 pub(crate) fn cell_id(input: Span) -> IResult<Span, String> {
     let (input, id) = identifier::id(input)?;
-    Ok((input, id.to_string()))
+    Ok((input, id.erease()))
 }
 
 /// <cell-type>         ::= <id>
 pub(crate) fn cell_type(input: Span) -> IResult<Span, String> {
     let (input, id) = identifier::id(input)?;
-    Ok((input, id.to_string()))
+    Ok((input, id.erease()))
 }
 
 ///  <cell-body-stmt>    ::= parameter (signed | real)? <id> <constant> <eol>
@@ -98,7 +98,7 @@ pub(crate) fn cell_body_stmt_param(input: Span) -> IResult<Span, (String, Consta
     let (input, _) = characters::sep(input)?;
     let (input, constant) = constant::constant(input)?;
     let (input, _) = characters::eol(input)?;
-    Ok((input, (id.to_string(), constant)))
+    Ok((input, (id.erease(), constant)))
 }
 
 ///  connect <id> <sigspec> <eol>
@@ -110,7 +110,7 @@ pub(crate) fn cell_connect_stmt(input: Span) -> IResult<Span, (String, SigSpec)>
     let (input, _) = characters::sep(input)?;
     let (input, id2) = crate::sigspec::sigspec(input)?;
     let (input, _) = characters::eol(input)?;
-    Ok((input, (id1.to_string(), id2)))
+    Ok((input, (id1.erease(), id2)))
 }
 
 /// <cell-end-stmt>     ::= end <eol>

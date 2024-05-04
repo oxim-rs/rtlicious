@@ -44,7 +44,7 @@ pub(crate) fn process_stmt(input: Span) -> IResult<Span, String> {
     let (input, _) = characters::sep(input)?;
     let (input, id) = identifier::id(input)?;
     let (input, _) = characters::eol(input)?;
-    Ok((input, id.to_string()))
+    Ok((input, id.erease()))
 }
 /// `<proc-end-stmt> ::= end <eol>`
 pub(crate) fn process_end_stmt(input: Span) -> IResult<Span, &str> {
