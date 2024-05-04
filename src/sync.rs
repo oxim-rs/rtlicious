@@ -106,7 +106,7 @@ pub(crate) fn memwr_stmt(input: Span) -> IResult<Span, (String, Memwr)> {
     Ok((
         input,
         (
-            memid.to_string(),
+            memid.erease(),
             Memwr {
                 attributes: attributes.into_iter().collect(),
                 address,

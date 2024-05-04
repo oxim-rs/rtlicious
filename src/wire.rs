@@ -37,7 +37,7 @@ impl Default for Wire {
 
 /// `<wire> ::= <attr-stmt>* <wire-stmt>`
 #[tracable_parser]
-pub fn wire(input: Span) -> IResult<Span, (String, Wire)> {
+pub fn wire(input: Span) -> IResult<Span, (Id, Wire)> {
     let (input, attrs) = many0(attribute::attr_stmt)(input)?;
     let (input, mut wire) = wire_stmt(input)?;
     wire.1.attributes = attrs.into_iter().collect();
@@ -45,7 +45,7 @@ pub fn wire(input: Span) -> IResult<Span, (String, Wire)> {
 }
 
 /// `<wire-stmt> ::= wire <wire-option>* <wire-id> <eol>`
-pub fn wire_stmt(input: Span) -> IResult<Span, (String, Wire)> {
+pub fn wire_stmt(input: Span) -> IResult<Span, (Id, Wire)> {
     let (input, _) = tag("wire")(input)?;
     let (input, _) = characters::sep(input)?;
     // with sep for each
@@ -64,7 +64,7 @@ pub fn wire_stmt(input: Span) -> IResult<Span, (String, Wire)> {
             WireOption::Signed => wire.signed = true,
         }
     }
-    Ok((input, (id.to_string(), wire)))
+    Ok((input, (id, wire)))
 }
 
 #[derive(Debug, Clone, PartialEq)]
@@ -143,7 +143,7 @@ mod tests {
             (
                 "wire $a\n",
                 (
-                    "a".to_string(),
+                    Id::Autogen("a".into()),
                     Wire {
                         width: 1,
                         offset: 0,
@@ -159,7 +159,7 @@ mod tests {
             (
                 "wire width 1 $a\n",
                 (
-                    "a".to_string(),
+                    Id::Autogen("a".into()),
                     Wire {
                         width: 1,
                         offset: 0,
@@ -175,7 +175,7 @@ mod tests {
             (
                 "wire offset 1 signed $a\n",
                 (
-                    "a".to_string(),
+                    Id::Autogen("a".into()),
                     Wire {
                         width: 1,
                         offset: 1,
@@ -191,7 +191,7 @@ mod tests {
             (
                 "wire input 10 $a\n",
                 (
-                    "a".to_string(),
+                    Id::Autogen("a".into()),
                     Wire {
                         width: 1,
                         offset: 0,
@@ -207,7 +207,7 @@ mod tests {
             (
                 "wire output 5 $a\n",
                 (
-                    "a".to_string(),
+                    Id::Autogen("a".into()),
                     Wire {
                         width: 1,
                         offset: 0,
@@ -223,7 +223,7 @@ mod tests {
             (
                 "wire inout 5 $a\n",
                 (
-                    "a".to_string(),
+                    Id::Autogen("a".into()),
                     Wire {
                         width: 1,
                         offset: 0,
@@ -239,7 +239,7 @@ mod tests {
             (
                 "wire upto $a\n",
                 (
-                    "a".to_string(),
+                    Id::Autogen("a".into()),
                     Wire {
                         width: 1,
                         offset: 0,

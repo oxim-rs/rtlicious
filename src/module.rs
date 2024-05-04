@@ -67,7 +67,7 @@ pub(crate) fn module(input: Span) -> IResult<Span, (String, Module)> {
     Ok((
         input,
         (
-            id.to_string(),
+            id.erease(),
             Module {
                 attributes,
                 parameters,
@@ -82,7 +82,7 @@ pub(crate) fn module(input: Span) -> IResult<Span, (String, Module)> {
 }
 
 /// `<module-stmt>       ::= module <id> <eol>`
-pub(crate) fn module_stmt(input: Span) -> IResult<Span, &str> {
+pub(crate) fn module_stmt(input: Span) -> IResult<Span, Id> {
     let (input, _) = tag("module")(input)?;
     let (input, _) = characters::sep(input)?;
     let (input, id) = identifier::id(input)?;
@@ -104,7 +104,7 @@ pub(crate) fn param_stmt(input: Span) -> IResult<Span, (String, Option<Constant>
     let (input, id) = preceded(characters::sep, identifier::id)(input)?;
     let (input, constant) = opt(preceded(characters::sep, constant::constant))(input)?;
     let (input, _) = characters::eol(input)?;
-    Ok((input, (id.to_string(), constant)))
+    Ok((input, (id.erease(), constant)))
 }
 
 #[cfg(test)]
@@ -153,9 +153,9 @@ mod tests {
     #[test]
     fn test_module_stmt() {
         let vectors = vec![
-            ("module \\dynports\n", "dynports"),
-            ("module \\top\n", "top"),
-            ("module \\src\n", "src"),
+            ("module \\dynports\n", Id::Public("dynports".into())),
+            ("module \\top\n", Id::Public("top".into())),
+            ("module \\src\n", Id::Public("src".into())),
         ];
         for (input, expected) in vectors {
             let span = Span::new_extra(input, Default::default());

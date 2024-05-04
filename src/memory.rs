@@ -74,7 +74,7 @@ pub(crate) fn memory_stmt(input: Span) -> IResult<Span, (String, Vec<MemoryOptio
     let (input, options) = nom::multi::many0(terminated(memory_option, characters::sep))(input)?;
     let (input, id) = identifier::id(input)?;
     let (input, _) = characters::eol(input)?;
-    Ok((input, (id.to_string(), options)))
+    Ok((input, (id.erease(), options)))
 }
 
 #[cfg(test)]
