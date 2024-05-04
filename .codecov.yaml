@@ -1,0 +1,5 @@
+codecov:
+  max_report_age: '24d'
+  require_ci_to_pass: yes
+  notify:
+    wait_for_ci: yes
